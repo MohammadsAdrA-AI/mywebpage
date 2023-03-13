@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Daily Dashboard</title>
+	<style>
+		body {
+			font-family: Arial, 'Franklin Gothic Medium', 'Arial Narrow' ;
+			font-size: 18px;
+			line-height: 1.5;
+			height: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: stretch;
+			align-content: stretch;
+			margin: 0;
+			padding: 0;
+			background-color: #f2f2f2;
+		}
+
+		h1 {
+			font-family: Arial, 'Franklin Gothic Medium', 'Arial Narrow' ;
+			font-size: 32px;
+			font-weight: bold;
+			margin-top: 20px;
+			margin-bottom: 10px;
+		}
+
+		p {
+			font-family: Arial, 'Franklin Gothic Medium', 'Arial Narrow' ;
+			font-size: 18px;
+			line-height: 1.5;
+			margin: 0;
+		}
+
+		.weather {
+  padding: 30px;
+  margin-bottom: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.4);
+  max-width: 300px;
+  flex: 1 1 100px;
+  align-self: center;
+  margin-right: 20px;
+}
+
+		.news {
+			padding: 30px;
+			margin-bottom: 40px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			background-color: rgba(255, 255, 255, 0.2);
+			
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: center;
+			align-content: center;
+			position: relative;
+			align-self: center;
+			max-width: none;
+			margin-right: 20px;
+		}
+
+		.logo {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 80px;
+			padding: 10px;
+		}
+
+		.logo img {
+			height: 100%;
+			width: auto;
+		}
+
+		.image-container {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: center;
+			align-content: center;
+			margin-top: 80px;
+		}
+
+		.image-container img {
+			max-width: 400px;
+			max-height: 400px;
+			object-fit: contain;
+			margin: 10px;
+		}
+
+		.chess {
+			padding: 30px;
+			margin-bottom: 40px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			background-color: rgba(255, 255, 255, 0.2);
+			flex: 1 0 auto;
+			max-width: 400px;
+			align-self: center;
+		}
+
+		.container {
+			flex: 1 0 auto;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			align-content: center;
+	}
+</style>
+<script>
+	// Reload the page every 4 hours
+		setInterval(() => {
+			location.reload();
+		}, 240 * 60 * 1000); // 240 minutes * 60 seconds * 1000 milliseconds
+	</script>
+</head>
+<body onload="setRandomBackground()">
+	<div class="weather container">
+		<h1>Current Weather in Toronto</h1>
+		<p><strong>Date:</strong> <span id="date"></span></p>
+		<p><strong>Weather:</strong> <span id="weather"></span></p>
+	</div>
+	<div class="chess container">
+		<h1>Daily Chess Puzzle</h1>
+		<div id="chess-puzzle"></div>
+	</div>
+	<div class="news">
+		<div class="logo">
+		  <img src="https://www.pngall.com/wp-content/uploads/4/Premier-League-PNG-Image.png" alt="Premier League logo">
+		</div>
+		<div class="image-container">
+		  <img src="live_cropped.png" alt="Image 1">
+		  <img src="premier_league_cropped.png" alt="Image 2">
+		</div>
+	  </div>
+
+	<script>
+		async function setRandomBackground() {
+		
+		const response = await fetch('https://source.unsplash.com/random');
+		const backgroundImage = `url(${response.url})`;
+		document.body.style.backgroundImage = backgroundImage;
+		document.body.style.backgroundSize = 'cover';
+	}
+
+	async function setWeather() {
+		const apiKey = 'a7b26051fb0040dda0420449231203';
+		const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=Toronto`;
+
+		try {
+			const response = await fetch(weatherUrl);
+			const data = await response.json();
+			document.getElementById('date').textContent = new Date().toLocaleDateString();
+			document.getElementById('weather').textContent = `${data.current.temp_c}°C, ${data.current.condition.text}`;
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+
+	async function setChessPuzzle() {
+		const puzzleUrl = 'https://api.chess.com/pub/puzzle';
+		const response = await fetch(puzzleUrl);
+		const data = await response.json();
+		const puzzleImage = data.image;
+		const puzzleContainer = document.getElementById('chess-puzzle');
+		puzzleContainer.innerHTML = '';
+		const img = document.createElement('img');
+		img.src = puzzleImage;
+		img.style.maxWidth = '100%';
+  		img.style.maxHeight = '100%';
+  		img.style.objectFit = 'contain';
+		puzzleContainer.appendChild(img);
+	}
+
+	setWeather();
+	setChessPuzzle();
+
+</script>
+</body>
+</html>
